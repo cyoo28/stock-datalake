@@ -1,0 +1,15 @@
+command to create cloudformation stack:
+
+  aws --region us-east-1 cloudformation create-stack --stack-name my-lambda \
+    --capabilities CAPABILITY_NAMED_IAM \
+    --template-body file://mylambda.yaml
+
+command to delete cloudformation stack - do this when stack creation fails:
+
+  aws --region us-east-1 cloudformation delete-stack --stack-name my-lambda
+
+command to update cloudformation stack:
+
+  aws --region us-east-1 cloudformation update-stack --stack-name my-lambda \
+    --capabilities CAPABILITY_NAMED_IAM \
+    --template-body file://mylambda.yaml
