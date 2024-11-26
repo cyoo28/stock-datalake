@@ -1,0 +1,52 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Lambda function and related resources.
+Resources:
+  MyLambdaLog:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/MyLambdaFunction2
+      RetentionInDays: 3
+  MyLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: MyLambdaFunctionRole2
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Policies:
+      - PolicyName: MyLambdaFunctionPolicy2
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+          - Effect: Allow
+            Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+            Resource: "*"
+  MyLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: MyLambdaFunction2
+      Description: Simple lambda function created using CloudFormation with zip
+      Runtime: python3.13
+      Handler: mylambda2.handler
+      Code:
+        S3Bucket: ix-code-deploy
+        S3Key: mylambda2.zip
+      Role: !GetAtt MyLambdaRole.Arn
+      Environment:
+        Variables:
+          MESSAGE: hello world 2
+      LoggingConfig:
+        LogGroup: /aws/lambda/MyLambdaFunction2
+      MemorySize: 128
+      Timeout: 60
+      TracingConfig:
+        Mode: Active
