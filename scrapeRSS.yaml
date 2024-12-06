@@ -6,6 +6,7 @@ Resources:
     Properties:
       LogGroupName: /aws/lambda/scrapeRSS
       RetentionInDays: 3
+      
   MyLambdaRole:
     Type: AWS::IAM::Role
     Properties:
@@ -22,6 +23,23 @@ Resources:
       ManagedPolicyArns:
           - arn:aws:iam::aws:policy/AmazonS3FullAccess
           - arn:aws:iam::aws:policy/AWSLambdaExecute
+          
+  MyEventRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: run-daily
+      ScheduleExpression: 0 1/6 * * ? *
+      Targets:
+          -  scrapeRSS
+          
+  MyLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: scrapeRSS
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt MyEventRule.Arn
+      
   MyLambda:
     Type: AWS::Lambda::Function
     Properties:
