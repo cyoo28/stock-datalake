@@ -28,7 +28,7 @@ Resources:
     Type: AWS::Events::Rule
     Properties:
       Name: run-daily-test
-      ScheduleExpression: 0 1/6 * * ? *
+      ScheduleExpression: cron(0 1/6 * * ? *)
       Targets:
           - Arn: !GetAtt MyLambda.Arn
             Id: scrapeRSS
