@@ -4,13 +4,13 @@ Resources:
   MyLambdaLog:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: /aws/lambda/scrapeRSS
+      LogGroupName: /aws/lambda/scrapeRSS-test
       RetentionInDays: 3
       
   MyLambdaRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: lambda-fullS3
+      RoleName: lambda-fullS3-test
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -27,7 +27,7 @@ Resources:
   MyEventRule:
     Type: AWS::Events::Rule
     Properties:
-      Name: run-daily
+      Name: run-daily-test
       ScheduleExpression: 0 1/6 * * ? *
       Targets:
           -  scrapeRSS
@@ -36,14 +36,14 @@ Resources:
     Type: AWS::Lambda::Permission
     Properties:
       Action: lambda:InvokeFunction
-      FunctionName: scrapeRSS
+      FunctionName: scrapeRSS-test
       Principal: events.amazonaws.com
       SourceArn: !GetAtt MyEventRule.Arn
       
   MyLambda:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: scrapeRSS
+      FunctionName: scrapeRSS-test
       Description: Lamdba function to scrape RSS feeds
       Runtime: python3.13
       Handler: scrapeRSS.main
@@ -55,7 +55,7 @@ Resources:
         Variables:
           MESSAGE: 
       LoggingConfig:
-        LogGroup: /aws/lambda/scrapeRSS
+        LogGroup: /aws/lambda/scrapeRSS-test
       MemorySize: 1024
       Timeout: 300
       TracingConfig:
