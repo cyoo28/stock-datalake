@@ -31,6 +31,7 @@ Resources:
       ScheduleExpression: 0 1/6 * * ? *
       Targets:
           - Arn: !GetAtt MyLambda.Arn
+          - Id: scrapeRSS
           
   MyLambdaPermission:
     Type: AWS::Lambda::Permission
