@@ -53,10 +53,12 @@ Resources:
       Role: !GetAtt MyLambdaRole.Arn
       Environment:
         Variables:
-          MESSAGE: 
+          bucket: 026090555438-stockdata
+          key: rssList.json
       LoggingConfig:
         LogGroup: /aws/lambda/scrapeRSS-test
       MemorySize: 1024
+      EphemeralStorage: 512
       Timeout: 300
       TracingConfig:
         Mode: Active
