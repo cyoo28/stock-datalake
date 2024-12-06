@@ -30,7 +30,7 @@ Resources:
       Name: run-daily-test
       ScheduleExpression: 0 1/6 * * ? *
       Targets:
-          -  scrapeRSS
+          -  Arn: !GetAtt MyLambda.Arn
           
   MyLambdaPermission:
     Type: AWS::Lambda::Permission
@@ -58,7 +58,6 @@ Resources:
       LoggingConfig:
         LogGroup: /aws/lambda/scrapeRSS-test
       MemorySize: 1024
-      EphemeralStorage: 512
       Timeout: 300
       TracingConfig:
         Mode: Active
