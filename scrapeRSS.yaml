@@ -4,12 +4,12 @@ Resources:
   MyLambdaLog:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: /aws/lambda/MyLambdaFunction2
+      LogGroupName: /aws/lambda/scrapeRSS
       RetentionInDays: 3
   MyLambdaRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: MyLambdaFunctionRole2
+      RoleName: lambda-fullS3
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -19,34 +19,25 @@ Resources:
             - lambda.amazonaws.com
           Action:
           - sts:AssumeRole
-      Policies:
-      - PolicyName: MyLambdaFunctionPolicy2
-        PolicyDocument:
-          Version: "2012-10-17"
-          Statement:
-          - Effect: Allow
-            Action:
-            - logs:CreateLogGroup
-            - logs:CreateLogStream
-            - logs:PutLogEvents
-            Resource: "*"
+      ManagedPolicyArns:
+          - 
   MyLambda:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: MyLambdaFunction2
-      Description: Simple lambda function created using CloudFormation with zip
+      FunctionName: scrapeRSS
+      Description: Lamdba function to scrape RSS feeds
       Runtime: python3.13
-      Handler: mylambda2.handler
+      Handler: scrapeRSS.main
       Code:
-        S3Bucket: ix-code-deploy
-        S3Key: mylambda2.zip
+        S3Bucket: 026090555438-stockdata
+        S3Key: rss.zip
       Role: !GetAtt MyLambdaRole.Arn
       Environment:
         Variables:
-          MESSAGE: hello world 2
+          MESSAGE: 
       LoggingConfig:
-        LogGroup: /aws/lambda/MyLambdaFunction2
-      MemorySize: 128
-      Timeout: 60
+        LogGroup: /aws/lambda/scrapeRSS
+      MemorySize: 1024
+      Timeout: 300
       TracingConfig:
         Mode: Active
