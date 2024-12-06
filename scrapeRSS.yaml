@@ -30,7 +30,9 @@ Resources:
       Name: run-daily-test
       ScheduleExpression: 0 1/6 * * ? *
       Targets:
-          -  Arn: !GetAtt MyLambda.Arn
+          -  Arn: !GetAtt
+            - scrapeRSS-test
+            - Arn
           
   MyLambdaPermission:
     Type: AWS::Lambda::Permission
