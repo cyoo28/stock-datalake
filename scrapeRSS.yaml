@@ -1,0 +1,64 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Lambda function and related resources.
+Resources:
+  MyLambdaLog:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/scrapeRSS
+      RetentionInDays: 3
+      
+  MyLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: lambda-fullS3
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      ManagedPolicyArns:
+          - arn:aws:iam::aws:policy/AmazonS3FullAccess
+          - arn:aws:iam::aws:policy/AWSLambdaExecute
+          
+  MyEventRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: run-daily
+      ScheduleExpression: cron(0 1/6 * * ? *)
+      Targets:
+          - Arn: !GetAtt MyLambda.Arn
+            Id: scrapeRSS
+          
+  MyLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: scrapeRSS
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt MyEventRule.Arn
+      
+  MyLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: scrapeRSS
+      Description: Lamdba function to scrape RSS feeds
+      Runtime: python3.13
+      Handler: scrapeRSS.main
+      Code:
+        S3Bucket: 026090555438-stockdata
+        S3Key: rss.zip
+      Role: !GetAtt MyLambdaRole.Arn
+      Environment:
+        Variables:
+          bucket: 026090555438-stockdata
+          key: rssList.json
+      LoggingConfig:
+        LogGroup: /aws/lambda/scrapeRSS
+      MemorySize: 1024
+      Timeout: 300
+      TracingConfig:
+        Mode: Active
