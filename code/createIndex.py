@@ -1,11 +1,9 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# <a href="https://colab.research.google.com/github/iyoo2018/findatalake/blob/master/createIndex.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a>
-
 # # Code Exclusive to Colab
 
-# In[19]:
+# In[ ]:
 
 
 import os
@@ -16,7 +14,7 @@ if 'COLAB_GPU' in os.environ:
   import sys
   sys.path.append('/content/gdrive/My Drive/Colab Notebooks')
 
-# In[104]:
+# In[ ]:
 
 
 if 'COLAB_GPU' in os.environ:
@@ -31,7 +29,7 @@ if 'COLAB_GPU' in os.environ:
 
 # # Import Packages
 
-# In[3]:
+# In[ ]:
 
 
 import boto3
@@ -40,7 +38,7 @@ import datetime
 
 # # HTMLFormatter Class
 
-# In[134]:
+# In[ ]:
 
 
 # Class for working with HTML
@@ -187,7 +185,7 @@ class HTMLformatter:
 # # AccessS3 Class
 # 
 
-# In[111]:
+# In[ ]:
 
 
 # Class for accessing s3
@@ -272,7 +270,7 @@ class AccessS3:
 
 # # StockData Object Class
 
-# In[112]:
+# In[ ]:
 
 
 # Class to represent stock data entries
@@ -303,7 +301,7 @@ class StockData:
 
 # # Scan for Files
 
-# In[113]:
+# In[ ]:
 
 
 # Scan for htmls to add to index.html
@@ -350,7 +348,7 @@ def checkHTML(mode, bucket, metaKey, htmlKey, tableKey, s3Helper):
 
 # # Create/update the table
 
-# In[124]:
+# In[ ]:
 
 
 # Create/update table with html files
@@ -382,7 +380,7 @@ def modifyTable(mode, metaData, bucket, headKey, tableKey, s3Helper, formatter):
 
 # # Collect Metadata
 
-# In[121]:
+# In[ ]:
 
 
 # Collect metadata for a single html
@@ -405,7 +403,7 @@ def collectMeta(stockObj, s3Helper, formatter):
 
 # # Update Table for Each HTML
 
-# In[122]:
+# In[ ]:
 
 
 # Update table with one html file
@@ -423,7 +421,7 @@ def updateSingleTable(mode, stockObj, headKey, tableKey, s3Helper, formatter):
 
 # # Update Table for All HTMLs
 
-# In[132]:
+# In[ ]:
 
 
 # Create # Update table with multiple html files
@@ -448,7 +446,7 @@ def updateAllTable(mode, bucket, metaKey, htmlKey, headKey, tableKey, s3Helper, 
 
 # # Create index.html
 
-# In[126]:
+# In[ ]:
 
 
 # Create index.html
@@ -475,7 +473,7 @@ def createIndex(bucket, headKey, tableKey, s3Helper, formatter):
 
 # # main
 
-# In[127]:
+# In[ ]:
 
 
 def main(event, context):
@@ -486,20 +484,22 @@ def main(event, context):
   s3Helper = AccessS3()
   formatter = HTMLformatter()
   # if set to create mode,
-  if event=="create":
+  if event.get('mode')=="create":
     # Set variable
+    mode = event["mode"]
     metaKey = os.environ["metaKey"]
     htmlKey = os.environ["htmlKey"]
     # Create a new table from scratch
-    count = updateAllTable(event, bucket, metaKey, htmlKey, headKey, tableKey, s3Helper, formatter)
+    count = updateAllTable(mode, bucket, metaKey, htmlKey, headKey, tableKey, s3Helper, formatter)
     print("Successfully created table with {} HTML file(s)".format(count))
   # otherwise if set to update mode,
-  elif event=="update":
+  elif event.get('mode')=="update":
     # Set variable
+    mode = event["mode"]
     metaKey = os.environ["metaKey"]
     htmlKey = os.environ["htmlKey"]
     # Add new html files to the table
-    count = updateAllTable(event, bucket, metaKey, htmlKey, headKey, tableKey, s3Helper, formatter)
+    count = updateAllTable(mode, bucket, metaKey, htmlKey, headKey, tableKey, s3Helper, formatter)
     if count > 0:
       print("Successfully added {} HTML file(s) to the table".format(count))
     else:
@@ -524,7 +524,7 @@ def main(event, context):
       'statusCode': 200
   }
 
-# In[137]:
+# In[ ]:
 
 
 if 'COLAB_GPU' in os.environ:
@@ -532,7 +532,7 @@ if 'COLAB_GPU' in os.environ:
   # create - create index.html from scratch
   # update - manually update index.html
   # s3 upload event - update index.html with html file uploaded to s3
-  main("update","")
+  main({"mode":"update"},"")
 
 # In[ ]:
 
