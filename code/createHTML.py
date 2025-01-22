@@ -181,7 +181,7 @@ class HTMLformatter:
 
 # # AccessS3 Class
 
-# In[5]:
+# In[33]:
 
 
 # Class for accessing s3
@@ -223,8 +223,9 @@ class AccessS3:
   # Return objects contained in a key
   # Arg: bucket [str] **bucket name**,
   #      key [str] **object key**
+  #      sort [str] default None **sort entries by upload date "newFirst" newest to oldest "newLast" oldest to newest**
   # Returns: objs [list of s3 objs] **objects in key**
-  def scanObjs(self, bucket, key, sort=False):
+  def scanObjs(self, bucket, key, sort=None):
     objs = []
     # Get all objects in bucket and key pair
     pages = self.paginator.paginate(Bucket=bucket, Prefix=key)
@@ -237,7 +238,10 @@ class AccessS3:
             objs.append(content)
       # Sort by last modified date
       lastModified = lambda obj: int(obj['LastModified'].strftime('%s'))
-      sortedObjs =  [obj['Key'] for obj in sorted(objs, key=lastModified, reverse=True)]
+      if sort=="newFirst":
+        sortedObjs =  [obj['Key'] for obj in sorted(objs, key=lastModified, reverse=True)]
+      elif sort=="newLast":
+        sortedObjs =  [obj['Key'] for obj in sorted(objs, key=lastModified)]
       return sortedObjs
     # otherwise,
     else:
@@ -298,7 +302,7 @@ class StockData:
 # # Scan for Files
 # 
 
-# In[7]:
+# In[32]:
 
 
 # Scan for files to create HTMLs for
@@ -312,13 +316,13 @@ def checkHTML(mode, bucket, metaKey, htmlKey, s3Helper):
   # if in create mode,
   if mode=="create":
     # get all meta keys
-    metas = s3Helper.scanObjs(bucket, metaKey)
+    metas = s3Helper.scanObjs(bucket, metaKey, sort="newLast")
     # get the base keys without the "metadata/" prefix
     baseKeys = [meta.split("/",1)[1] for meta in metas]
   # otherwise if in update mode,
   elif mode=="update":
     # get all meta and html keys
-    metas = s3Helper.scanObjs(bucket, metaKey)
+    metas = s3Helper.scanObjs(bucket, metaKey, sort="newLast")
     htmls = s3Helper.scanObjs(bucket, htmlKey)
     # extract the entry ids
     ids = [meta.rsplit("/", 1)[1].split(".",1)[0] for meta in metas]
@@ -436,7 +440,7 @@ def main(event, context):
     'statusCode': 200,
   }
 
-# In[11]:
+# In[34]:
 
 
 if 'COLAB_GPU' in os.environ:

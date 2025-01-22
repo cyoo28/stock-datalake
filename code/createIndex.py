@@ -3,7 +3,7 @@
 
 # # Code Exclusive to Colab
 
-# In[1]:
+# In[ ]:
 
 
 import os
@@ -14,7 +14,7 @@ if 'COLAB_GPU' in os.environ:
   import sys
   sys.path.append('/content/gdrive/My Drive/Colab Notebooks')
 
-# In[2]:
+# In[ ]:
 
 
 if 'COLAB_GPU' in os.environ:
@@ -29,7 +29,7 @@ if 'COLAB_GPU' in os.environ:
 
 # # Import Packages
 
-# In[3]:
+# In[ ]:
 
 
 import boto3
@@ -38,7 +38,7 @@ import datetime
 
 # # HTMLFormatter Class
 
-# In[4]:
+# In[ ]:
 
 
 # Class for working with HTML
@@ -185,7 +185,7 @@ class HTMLformatter:
 # # AccessS3 Class
 # 
 
-# In[5]:
+# In[22]:
 
 
 # Class for accessing s3
@@ -227,8 +227,9 @@ class AccessS3:
   # Return objects contained in a key
   # Arg: bucket [str] **bucket name**,
   #      key [str] **object key**
+  #      sort [str] default None **sort entries by upload date "newFirst" newest to oldest "newLast" oldest to newest**
   # Returns: objs [list of s3 objs] **objects in key**
-  def scanObjs(self, bucket, key, sort=False):
+  def scanObjs(self, bucket, key, sort=None):
     objs = []
     # Get all objects in bucket and key pair
     pages = self.paginator.paginate(Bucket=bucket, Prefix=key)
@@ -241,7 +242,10 @@ class AccessS3:
             objs.append(content)
       # Sort by last modified date
       lastModified = lambda obj: int(obj['LastModified'].strftime('%s'))
-      sortedObjs =  [obj['Key'] for obj in sorted(objs, key=lastModified, reverse=True)]
+      if sort=="newFirst":
+        sortedObjs =  [obj['Key'] for obj in sorted(objs, key=lastModified, reverse=True)]
+      elif sort=="newLast":
+        sortedObjs =  [obj['Key'] for obj in sorted(objs, key=lastModified)]
       return sortedObjs
     # otherwise,
     else:
@@ -270,7 +274,7 @@ class AccessS3:
 
 # # StockData Object Class
 
-# In[6]:
+# In[24]:
 
 
 # Class to represent stock data entries
@@ -301,7 +305,7 @@ class StockData:
 
 # # Scan for Files
 
-# In[7]:
+# In[23]:
 
 
 # Scan for htmls to add to index.html
@@ -314,7 +318,7 @@ class StockData:
 # Returns: stockObjs [list of StockData objs]
 def checkHTML(mode, bucket, metaKey, htmlKey, tableKey, s3Helper):
   # get all (sorted) html and meta data
-  htmls = s3Helper.scanObjs(bucket, htmlKey, sort=True)
+  htmls = s3Helper.scanObjs(bucket, htmlKey, sort="newFirst")
   metas = s3Helper.scanObjs(bucket, metaKey)
   # get the corresponding basekey for each html key (and verify that there is a metakey)
   baseKeys = []
@@ -348,7 +352,7 @@ def checkHTML(mode, bucket, metaKey, htmlKey, tableKey, s3Helper):
 
 # # Create/update the table
 
-# In[8]:
+# In[25]:
 
 
 # Create/update table with html files
@@ -380,7 +384,7 @@ def modifyTable(mode, metaData, bucket, headKey, tableKey, s3Helper, formatter):
 
 # # Collect Metadata
 
-# In[18]:
+# In[26]:
 
 
 # Collect metadata for a single html
@@ -403,7 +407,7 @@ def collectMeta(stockObj, s3Helper, formatter):
 
 # # Update Table for Each HTML
 
-# In[10]:
+# In[27]:
 
 
 # Update table with one html file
@@ -421,7 +425,7 @@ def updateSingleTable(mode, stockObj, headKey, tableKey, s3Helper, formatter):
 
 # # Update Table for All HTMLs
 
-# In[11]:
+# In[28]:
 
 
 # Create # Update table with multiple html files
@@ -446,7 +450,7 @@ def updateAllTable(mode, bucket, metaKey, htmlKey, headKey, tableKey, s3Helper, 
 
 # # Create index.html
 
-# In[12]:
+# In[29]:
 
 
 # Create index.html
@@ -473,7 +477,7 @@ def createIndex(bucket, headKey, tableKey, s3Helper, formatter):
 
 # # main
 
-# In[13]:
+# In[30]:
 
 
 def main(event, context):
@@ -524,7 +528,7 @@ def main(event, context):
       'statusCode': 200
   }
 
-# In[19]:
+# In[31]:
 
 
 if 'COLAB_GPU' in os.environ:

@@ -98,8 +98,9 @@ class AccessS3:
   # Return objects contained in a key
   # Arg: bucket [str] **bucket name**,
   #      key [str] **object key**
+  #      sort [str] default None **sort entries by upload date "newFirst" newest to oldest "newLast" oldest to newest**
   # Returns: objs [list of s3 objs] **objects in key**
-  def scanObjs(self, bucket, key, sort=False):
+  def scanObjs(self, bucket, key, sort=None):
     objs = []
     # Get all objects in bucket and key pair
     pages = self.paginator.paginate(Bucket=bucket, Prefix=key)
@@ -112,7 +113,10 @@ class AccessS3:
             objs.append(content)
       # Sort by last modified date
       lastModified = lambda obj: int(obj['LastModified'].strftime('%s'))
-      sortedObjs =  [obj['Key'] for obj in sorted(objs, key=lastModified, reverse=True)]
+      if sort=="newFirst":
+        sortedObjs =  [obj['Key'] for obj in sorted(objs, key=lastModified, reverse=True)]
+      elif sort=="newLast":
+        sortedObjs =  [obj['Key'] for obj in sorted(objs, key=lastModified)]
       return sortedObjs
     # otherwise,
     else:
