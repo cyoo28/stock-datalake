@@ -3,7 +3,7 @@
 
 # # Code Exclusive to Colab
 
-# In[ ]:
+# In[1]:
 
 
 import os
@@ -14,7 +14,7 @@ if 'COLAB_GPU' in os.environ:
   import sys
   sys.path.append('/content/gdrive/My Drive/Colab Notebooks')
 
-# In[ ]:
+# In[2]:
 
 
 if 'COLAB_GPU' in os.environ:
@@ -29,7 +29,7 @@ if 'COLAB_GPU' in os.environ:
 
 # # Import Packages
 
-# In[ ]:
+# In[3]:
 
 
 import boto3
@@ -38,7 +38,7 @@ import datetime
 
 # # HTMLFormatter Class
 
-# In[ ]:
+# In[4]:
 
 
 # Class for working with HTML
@@ -185,7 +185,7 @@ class HTMLformatter:
 # # AccessS3 Class
 # 
 
-# In[ ]:
+# In[5]:
 
 
 # Class for accessing s3
@@ -270,7 +270,7 @@ class AccessS3:
 
 # # StockData Object Class
 
-# In[ ]:
+# In[6]:
 
 
 # Class to represent stock data entries
@@ -301,7 +301,7 @@ class StockData:
 
 # # Scan for Files
 
-# In[ ]:
+# In[7]:
 
 
 # Scan for htmls to add to index.html
@@ -348,7 +348,7 @@ def checkHTML(mode, bucket, metaKey, htmlKey, tableKey, s3Helper):
 
 # # Create/update the table
 
-# In[ ]:
+# In[8]:
 
 
 # Create/update table with html files
@@ -380,7 +380,7 @@ def modifyTable(mode, metaData, bucket, headKey, tableKey, s3Helper, formatter):
 
 # # Collect Metadata
 
-# In[ ]:
+# In[18]:
 
 
 # Collect metadata for a single html
@@ -397,13 +397,13 @@ def collectMeta(stockObj, s3Helper, formatter):
   metaData['external-link'] = formatter.a(metaData['link'],'website')
   metaData.pop('link')
   # Add link to S3 HTML as formatted a tag
-  url = "https://{}.s3.us-east-1.amazonaws.com/htmldata/{}.html".format(stockObj.bucket, metaData['id'])
+  url = "https://stockdata.ix.ixcloudsecurity.com/htmldata/{}.html".format(metaData['id'])
   metaData['internal-link'] = formatter.a(url,'s3')
   return metaData
 
 # # Update Table for Each HTML
 
-# In[ ]:
+# In[10]:
 
 
 # Update table with one html file
@@ -421,7 +421,7 @@ def updateSingleTable(mode, stockObj, headKey, tableKey, s3Helper, formatter):
 
 # # Update Table for All HTMLs
 
-# In[ ]:
+# In[11]:
 
 
 # Create # Update table with multiple html files
@@ -446,7 +446,7 @@ def updateAllTable(mode, bucket, metaKey, htmlKey, headKey, tableKey, s3Helper, 
 
 # # Create index.html
 
-# In[ ]:
+# In[12]:
 
 
 # Create index.html
@@ -473,7 +473,7 @@ def createIndex(bucket, headKey, tableKey, s3Helper, formatter):
 
 # # main
 
-# In[ ]:
+# In[13]:
 
 
 def main(event, context):
@@ -524,7 +524,7 @@ def main(event, context):
       'statusCode': 200
   }
 
-# In[ ]:
+# In[19]:
 
 
 if 'COLAB_GPU' in os.environ:
@@ -532,7 +532,7 @@ if 'COLAB_GPU' in os.environ:
   # create - create index.html from scratch
   # update - manually update index.html
   # s3 upload event - update index.html with html file uploaded to s3
-  main({"mode":"update"},"")
+  main({"mode":"create"},"")
 
 # In[ ]:
 

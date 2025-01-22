@@ -3,7 +3,7 @@
 
 # # Code Exclusive to Colab
 
-# In[ ]:
+# In[1]:
 
 
 import os
@@ -14,7 +14,7 @@ if 'COLAB_GPU' in os.environ:
   import sys
   sys.path.append('/content/gdrive/My Drive/Colab Notebooks')
 
-# In[ ]:
+# In[2]:
 
 
 if 'COLAB_GPU' in os.environ:
@@ -27,7 +27,7 @@ if 'COLAB_GPU' in os.environ:
 
 # # Import Packages
 
-# In[ ]:
+# In[3]:
 
 
 import boto3
@@ -35,7 +35,7 @@ import json
 
 # # HTMLFormatter Class
 
-# In[ ]:
+# In[4]:
 
 
 # Class for working with HTML
@@ -181,7 +181,7 @@ class HTMLformatter:
 
 # # AccessS3 Class
 
-# In[ ]:
+# In[5]:
 
 
 # Class for accessing s3
@@ -266,7 +266,7 @@ class AccessS3:
 
 # # StockData Object Class
 
-# In[ ]:
+# In[6]:
 
 
 # Class to represent stock data entries
@@ -298,7 +298,7 @@ class StockData:
 # # Scan for Files
 # 
 
-# In[ ]:
+# In[7]:
 
 
 # Scan for files to create HTMLs for
@@ -334,7 +334,7 @@ def checkHTML(mode, bucket, metaKey, htmlKey, s3Helper):
 
 # # Create Each HTML
 
-# In[ ]:
+# In[8]:
 
 
 # Create an HTML file for a single file
@@ -359,7 +359,7 @@ def createSingleHTML(stockObj, s3Helper, formatter):
   # Create the body
   body = formatter.body("Text", text_content)
   # Create a link to return to index.html
-  return_link = formatter.a("https://{}.s3.us-east-1.amazonaws.com/index.html".format(stockObj.bucket),"Click to return to index.html")
+  return_link = formatter.a("https://stockdata.ix.ixcloudsecurity.com","Click to return to index.html")
   # Create the full HTML file
   formatter.fullWrite(head, heading, table, body, return_link)
   # Write the HTML file to S3
@@ -369,7 +369,7 @@ def createSingleHTML(stockObj, s3Helper, formatter):
 
 # # Create All HTMLs
 
-# In[ ]:
+# In[9]:
 
 
 # Create all HTML files
@@ -390,7 +390,7 @@ def createAllHTML(mode, bucket, metaKey, htmlKey, s3Helper, formatter):
 
 # # main
 
-# In[ ]:
+# In[10]:
 
 
 def main(event, context):
@@ -436,7 +436,7 @@ def main(event, context):
     'statusCode': 200,
   }
 
-# In[ ]:
+# In[11]:
 
 
 if 'COLAB_GPU' in os.environ:
@@ -445,7 +445,7 @@ if 'COLAB_GPU' in os.environ:
   # update - only create html files that don't already exist
   # review - view the html files that already exist
   # s3 upload event - creates html file for uploaded s3 file
-  result = main({"mode":"update"},"")
+  result = main({"mode":"create"},"")
   print(result)
 
 # In[ ]:
