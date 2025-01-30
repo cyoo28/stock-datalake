@@ -1,4 +1,4 @@
-# Stock Datalake
+# Financial Datalake
 This project is a reference architecture for storing data and presenting it in a secure manner. This project was completed in January 2025.
 
 ## Table of Contents
@@ -7,7 +7,7 @@ This project is a reference architecture for storing data and presenting it in a
 * [What were the results?](#what-were-the-results?)
 
 ## What was the problem?
-Storing data in the cloud introduces challenges relating to security and accessibility. It is very important to understand how to properly provision permissions to your data so that users can gain access to the information they need without exposing your data to unneccessary risk. This project seeks to serve as a reference architecture for how to securely store and access data saved to S3 in a scalable and cost-efficient manner. The solution leverages AWS services to implement best practices for cloud data storage and security, enabling seamless upload and retrieval of sensitive information.
+Storing data in the cloud introduces challenges relating to security and accessibility. It is very important to understand how to properly provision permissions to your data so that users can gain access to the information they need without exposing your data to unneccessary risk. This project seeks to serve as a reference architecture for how to securely store and access data saved to S3 in a scalable and cost-efficient manner. The solution leverages AWS services to implement best practices for cloud data storage and security, enabling seamless upload and retrieval of sensitive information. The data that is used for this data lake is publicly accessible data that is available through CNBC's website. However, the architecture outlined in this project is still applicable for private data that needs to be securely managed.
 
 ## What was the solution?
 To collect articles for the data lake, I created multiple Lambda functions in AWS using Terraform. I implemented a scraper using beautifulSoup and requests that would scrape articles published to multiple CNBC RSS feeds and save them to S3. For each article, I would create an HTML file containing the contents of the article as well as relevant information such as the publication date and a link to the actual article. I also created an index.html file, which contained a table listing all the articles that I had saved to S3. The code for this project can be reviewed in the code subdirectory and used the following resources:
@@ -81,6 +81,8 @@ This bucket policy is similar to the previous one in that it allows read-only ac
 * Route53
 
 ## What were the results?
-The stock articles are available at: [https://stockdata.ix.ixcloudsecurity.com](https://stockdata.ix.ixcloudsecurity.com). This list is regularly updated.
+The financial articles are available at: [https://findata.ix.ixcloudsecurity.com](https://findata.ix.ixcloudsecurity.com). This list is regularly updated.
 ### Issues that still need to be addressed
 One issue that has been observed is that some articles require a premium subscription. As a result, the scraper is unable to access these articles and the entry saved to S3 is empty. One potential work around is to ignore articles that are inaccesible.
+### Future projects
+Creating a financial datalake with numerous articles opens the door to future work analyzing this information. It could be interesting to train a machine learning algorithm that is capable of producing actionable predictions in the stock market based on trending news and financial information.
