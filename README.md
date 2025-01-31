@@ -81,7 +81,7 @@ This bucket policy is similar to the previous one in that it allows read-only ac
 * Route53
 
 ## What were the results?
-The financial articles are available at: [https://findata.ix.ixcloudsecurity.com](https://findata.ix.ixcloudsecurity.com). This list is regularly updated.
+The financial articles are available at: [https://findata.ix.ixcloudsecurity.com](https://findata.ix.ixcloudsecurity.com). This list is regularly updated. The links to the articles on the CNBC website are still available but the internal links to the text data stored in S3 are not.
 ### Issues that still need to be addressed
 One issue that has been observed is that some articles require a premium subscription. As a result, the scraper is unable to access these articles and the entry saved to S3 is empty. One potential work around is to ignore articles that are inaccesible.
 ### Future projects
