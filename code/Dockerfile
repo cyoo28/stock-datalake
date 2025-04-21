@@ -34,4 +34,4 @@ ENV metaKey=metadata
 ENV htmlKey=htmldata
 ENV headKey=tableHead.txt
 ENV tableKey=tableContents.txt
-CMD [ "${CODENAME}.main" ]
+ENTRYPOINT python /${CODENAME}/${CODENAME}.py
