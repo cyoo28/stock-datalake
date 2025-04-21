@@ -14,6 +14,7 @@ if 'COLAB_GPU' in os.environ:
   import sys
   sys.path.append('/content/gdrive/My Drive/Colab Notebooks')
 
+
 # In[ ]:
 
 
@@ -22,6 +23,7 @@ if 'COLAB_GPU' in os.environ:
   os.environ['AWS_CONFIG_FILE']="/content/gdrive/My Drive/cred-stockdata.txt"
   # Set environment variables
   os.environ["bucket"] = "026090555438-stockdata"
+
 
 # # Import Packages
 
@@ -32,6 +34,7 @@ import json
 import boto3
 import datetime
 from collections import Counter
+
 
 # # AccessS3 Class
 
@@ -122,6 +125,7 @@ class AccessS3:
         matchObjs.append(obj)
     return matchObjs
 
+
 # # Get publication dates
 
 # In[ ]:
@@ -139,6 +143,7 @@ def getDates(bucket, keys, s3Helper):
     dates.append(date["date"])
   return dates
 
+
 # # Convert publication dates
 
 # In[ ]:
@@ -150,6 +155,7 @@ def getDates(bucket, keys, s3Helper):
 def convertDates(unstrDates):
   dateFormat = "%a, %d %b %Y %H:%M:%S %Z"
   return [datetime.datetime.strptime(unstrDate, dateFormat) for unstrDate in unstrDates]
+
 
 # # Lookup a key in a list of keys (not accessing s3)
 
@@ -163,6 +169,7 @@ def convertDates(unstrDates):
 def lookupKeys(keys, lookupKey):
   matchKeys = [key for key in keys if lookupKey in key]
   return matchKeys
+
 
 # # Delete Duplicates
 
@@ -201,6 +208,7 @@ def deleteDup(bucket):
   print("{} have been deleted".format(count))
   return 0
 
+
 # # main
 
 # In[ ]:
@@ -213,6 +221,7 @@ def main(event, context):
       'statusCode': 200
   }
 
+
 # # Test
 
 # In[ ]:
@@ -222,7 +231,10 @@ if 'COLAB_GPU' in os.environ:
   result = main(None, None)
   print(result)
 
+
 # In[ ]:
 
 
+if __name__ == "__main__":
+    main(None, None)
 
