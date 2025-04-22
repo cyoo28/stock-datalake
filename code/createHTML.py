@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+# <a href="https://colab.research.google.com/github/cyoo28/stock-datalake/blob/master/code/createHTML.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a>
+
 # # Code Exclusive to Colab
 
-# In[1]:
+# In[ ]:
 
 
 import os
@@ -14,28 +16,31 @@ if 'COLAB_GPU' in os.environ:
   import sys
   sys.path.append('/content/gdrive/My Drive/Colab Notebooks')
 
-# In[2]:
+
+# In[ ]:
 
 
 if 'COLAB_GPU' in os.environ:
   # Set configuration file to access AWS
-  os.environ['AWS_CONFIG_FILE']="/content/gdrive/My Drive/cred-stockdata.txt"
+  os.environ["AWS_CONFIG_FILE"]="/content/gdrive/My Drive/cred-stockdata.txt"
   # Set environment variables
   os.environ['bucket'] = "026090555438-stockdata"
-  os.environ['html'] = "htmldata"
-  os.environ['meta'] = "metadata"
+  os.environ["metaKey"] = "htmldata"
+  os.environ["htmlKey"] = "metadata"
+
 
 # # Import Packages
 
-# In[3]:
+# In[ ]:
 
 
 import boto3
 import json
 
+
 # # HTMLFormatter Class
 
-# In[4]:
+# In[ ]:
 
 
 # Class for working with HTML
@@ -179,9 +184,10 @@ class HTMLformatter:
     )
     return 0
 
+
 # # AccessS3 Class
 
-# In[33]:
+# In[ ]:
 
 
 # Class for accessing s3
@@ -268,9 +274,10 @@ class AccessS3:
         matchObjs.append(obj)
     return matchObjs
 
+
 # # StockData Object Class
 
-# In[6]:
+# In[ ]:
 
 
 # Class to represent stock data entries
@@ -299,10 +306,11 @@ class StockData:
     text = text.split("\n")
     return text
 
+
 # # Scan for Files
 # 
 
-# In[32]:
+# In[ ]:
 
 
 # Scan for files to create HTMLs for
@@ -336,9 +344,10 @@ def checkHTML(mode, bucket, metaKey, htmlKey, s3Helper):
     stockObjs.append(StockData(bucket, baseKey))
   return stockObjs
 
+
 # # Create Each HTML
 
-# In[8]:
+# In[ ]:
 
 
 # Create an HTML file for a single file
@@ -371,9 +380,10 @@ def createSingleHTML(stockObj, s3Helper, formatter):
   formatter.saveHTML(stockObj.bucket, htmlKey)
   return 0
 
+
 # # Create All HTMLs
 
-# In[9]:
+# In[ ]:
 
 
 # Create all HTML files
@@ -392,9 +402,10 @@ def createAllHTML(mode, bucket, metaKey, htmlKey, s3Helper, formatter):
     createSingleHTML(stockObj, s3Helper, formatter)
   return len(stockObjs)
 
+
 # # main
 
-# In[10]:
+# In[ ]:
 
 
 def main(event, context):
@@ -406,8 +417,8 @@ def main(event, context):
   if event.get('mode')=="create" or event.get('mode')=="update":
     # Set variables
     mode = event["mode"]
-    metaKey = os.environ["meta"]
-    htmlKey = os.environ['html']
+    metaKey = os.environ["metaKey"]
+    htmlKey = os.environ["htmlKey"]
     # Create all HTMLs based on mode
     count = createAllHTML(mode, bucket, metaKey, htmlKey, s3Helper, formatter)
     if count > 0:
@@ -418,8 +429,8 @@ def main(event, context):
   elif event.get('mode')=="review":
     # Set variables
     mode = event["mode"]
-    metaKey = os.environ["meta"]
-    htmlKey = os.environ['html']
+    metaKey = os.environ["metaKey"]
+    htmlKey = os.environ["htmlKey"]
     # Get all html and meta objects
     htmls = s3Helper.scanObjs(bucket, htmlKey)
     metas = s3Helper.scanObjs(bucket, metaKey)
@@ -440,7 +451,8 @@ def main(event, context):
     'statusCode': 200,
   }
 
-# In[34]:
+
+# In[ ]:
 
 
 if 'COLAB_GPU' in os.environ:
@@ -449,10 +461,13 @@ if 'COLAB_GPU' in os.environ:
   # update - only create html files that don't already exist
   # review - view the html files that already exist
   # s3 upload event - creates html file for uploaded s3 file
-  result = main({"mode":"create"},"")
+  result = main({"mode":"update"},"")
   print(result)
+
 
 # In[ ]:
 
 
+if __name__ == "__main__":
+    main({"mode":"update"}, None)
 

@@ -14,6 +14,7 @@ if 'COLAB_GPU' in os.environ:
   import sys
   sys.path.append('/content/gdrive/My Drive/Colab Notebooks')
 
+
 # In[ ]:
 
 
@@ -23,6 +24,7 @@ if 'COLAB_GPU' in os.environ:
   # Set environment variables
   os.environ["bucket"] = "026090555438-stockdata"
   os.environ["rssKey"] = "rssList.json"
+
 
 # In[ ]:
 
@@ -42,6 +44,7 @@ tech = {"network":"CNBC", "feed":"Tech", "url":"https://search.cnbc.com/rs/searc
 invest = {"network":"CNBC", "feed":"Investing", "url":"https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=15839069"}
 """
 
+
 # # Import Packages
 
 # In[ ]:
@@ -53,6 +56,7 @@ from bs4 import BeautifulSoup
 import json
 import boto3
 import datetime
+
 
 # # AccessS3 Class
 
@@ -143,6 +147,7 @@ class AccessS3:
         matchObjs.append(obj)
     return matchObjs
 
+
 # # SaveStockData Class
 
 # In[ ]:
@@ -216,6 +221,7 @@ class SaveStockData:
     print("Saved object at {}".format(key))
     return 0
 
+
 # # Scrape RSS Feeds
 
 # In[ ]:
@@ -230,6 +236,7 @@ def fetchRSS(source):
   # extract the entries from the retrieved feed
   entries = RSS.entries
   return entries
+
 
 # # Parse HTML
 
@@ -264,6 +271,7 @@ def textExtract(soup):
   # return the entry joined as a single string
   return ("\n").join(text)
 
+
 # # Get publication dates
 
 # In[ ]:
@@ -281,6 +289,7 @@ def getDates(bucket, keys, s3Helper):
     dates.append(date["date"])
   return dates
 
+
 # # Convert publication dates
 
 # In[ ]:
@@ -292,6 +301,7 @@ def getDates(bucket, keys, s3Helper):
 def convertDates(unstrDates):
   dateFormat = "%a, %d %b %Y %H:%M:%S %Z"
   return [datetime.datetime.strptime(unstrDate, dateFormat) for unstrDate in unstrDates]
+
 
 # # Save New Entries to S3
 
@@ -325,6 +335,7 @@ def saveSingleEntry(newEntry, network, feed, bucket):
   # upload text data
   stockSaver.saveData(textData, bucket, textKey)
   return 0
+
 
 # In[ ]:
 
@@ -391,6 +402,7 @@ def saveNewEntries(entries, network, feed, bucket, s3Helper):
     print("{} new entries for {}".format(count, feed))
   return count
 
+
 # # main
 
 # In[ ]:
@@ -421,6 +433,7 @@ def main(event, context):
       'statusCode': 200
   }
 
+
 # # Test
 
 # In[ ]:
@@ -431,7 +444,10 @@ if 'COLAB_GPU' in os.environ:
   result = main(None, None)
   print(result)
 
+
 # In[ ]:
 
 
+if __name__ == "__main__":
+    main(None, None)
 

@@ -14,6 +14,7 @@ if 'COLAB_GPU' in os.environ:
   import sys
   sys.path.append('/content/gdrive/My Drive/Colab Notebooks')
 
+
 # In[ ]:
 
 
@@ -27,6 +28,7 @@ if 'COLAB_GPU' in os.environ:
   os.environ["headKey"] = "tableHead.txt"
   os.environ["tableKey"] = "tableContents.txt"
 
+
 # # Import Packages
 
 # In[ ]:
@@ -35,6 +37,7 @@ if 'COLAB_GPU' in os.environ:
 import boto3
 import json
 import datetime
+
 
 # # HTMLFormatter Class
 
@@ -182,6 +185,7 @@ class HTMLformatter:
     )
     return 0
 
+
 # # AccessS3 Class
 # 
 
@@ -272,6 +276,7 @@ class AccessS3:
         matchObjs.append(obj)
     return matchObjs
 
+
 # # StockData Object Class
 
 # In[24]:
@@ -302,6 +307,7 @@ class StockData:
     text = json.loads(s3Helper.getObj(self.bucket, textKey)['Body'].read().decode())
     text = text.split("\n")
     return text
+
 
 # # Scan for Files
 
@@ -350,6 +356,7 @@ def checkHTML(mode, bucket, metaKey, htmlKey, tableKey, s3Helper):
     stockObjs.append(StockData(bucket, baseKey))
   return stockObjs
 
+
 # # Create/update the table
 
 # In[25]:
@@ -382,6 +389,7 @@ def modifyTable(mode, metaData, bucket, headKey, tableKey, s3Helper, formatter):
     s3Helper.saveObj(table, bucket, tableKey)
   return 0
 
+
 # # Collect Metadata
 
 # In[26]:
@@ -405,6 +413,7 @@ def collectMeta(stockObj, s3Helper, formatter):
   metaData['internal-link'] = formatter.a(url,'s3')
   return metaData
 
+
 # # Update Table for Each HTML
 
 # In[27]:
@@ -422,6 +431,7 @@ def updateSingleTable(mode, stockObj, headKey, tableKey, s3Helper, formatter):
   metaData = [collectMeta(stockObj, s3Helper, formatter)]
   modifyTable(mode, metaData, stockObj.bucket, headKey, tableKey, s3Helper, formatter)
   return 0
+
 
 # # Update Table for All HTMLs
 
@@ -447,6 +457,7 @@ def updateAllTable(mode, bucket, metaKey, htmlKey, headKey, tableKey, s3Helper, 
     metaData = [collectMeta(stockObj, s3Helper, formatter) for stockObj in stockObjs]
     modifyTable(mode, metaData, bucket, headKey, tableKey, s3Helper, formatter)
   return(len(stockObjs))
+
 
 # # Create index.html
 
@@ -474,6 +485,7 @@ def createIndex(bucket, headKey, tableKey, s3Helper, formatter):
   key = "index.html"
   formatter.saveHTML(bucket, key)
   return 0
+
 
 # # main
 
@@ -528,6 +540,7 @@ def main(event, context):
       'statusCode': 200
   }
 
+
 # In[31]:
 
 
@@ -538,7 +551,10 @@ if 'COLAB_GPU' in os.environ:
   # s3 upload event - update index.html with html file uploaded to s3
   main({"mode":"create"},"")
 
+
 # In[ ]:
 
 
+if __name__ == "__main__":
+    main({"mode":"update"}, None)
 
